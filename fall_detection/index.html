@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAFE - Smart Assistive Fall-detection Equipment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0097a7;
+        }
+
+        .logo-subtitle {
+            font-size: 10px;
+            color: #666;
+            margin-top: -2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 188, 212, 0.1);
+            color: #0097a7;
+        }
+
+        .battery-status {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .main-content {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1976d2;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .welcome-subtitle {
+            font-size: 26px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .welcome-description {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .content-area {
+            max-width: 1000px;
+            margin: 0 auto;
+            min-height: 400px;
+            margin-bottom: 40px;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 500px;
+            /* background: #f5f5f5; */
+            border-radius: 15px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            /* border: 2px dashed #ccc; */
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 50px;
+        }
+
+        .activity-dashboard {
+            display: none;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            /* z-index: 1; */
+        }
+
+        .activity-summary {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .activity-timer {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .activity-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .activity-icon.standing {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+        }
+
+        .activity-icon.walking {
+            background: linear-gradient(135deg, #03a9f4, #0288d1);
+        }
+
+        .activity-icon.sleeping {
+            background: linear-gradient(135deg, #00bcd4, #0097a7);
+        }
+
+        .activity-icon.sitting {
+            background: linear-gradient(135deg, #009688, #00695c);
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2196f3, #21cbf3);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .action-buttons {
+            display: none;
+            justify-content: center;
+            gap: 70px;
+            margin-bottom: 40px;
+        }
+
+        .action-buttons.logged-in {
+            display: flex;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+            min-width: 200px;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(25, 118, 210, 0.4);
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(25, 118, 210, 0.4);
+        }
+
+        .action-btn.active {
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+        }
+
+        .action-btn.location {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.3);
+        }
+
+        .action-btn.location:hover {
+            box-shadow: 0 12px 35px rgba(244, 67, 54, 0.4);
+        }
+
+        .action-btn.activity {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .action-btn.activity:hover {
+            box-shadow: 0 12px 35px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-icon {
+            font-size: 24px;
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: left;
+            position: relative; 
+        }
+
+        .info-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+        }
+       
+        .info-panel.logged-in {
+            display: block;
+        }
+
+.login-container {
+    text-align: center;
+    margin-top: 40px;
+}
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 10px;
+            color: #666;
+            margin-top: 40px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: #666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: #0097a7;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000 !important;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .settings-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .device-list {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .device-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .device-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .device-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .device-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+
+        .device-status.disconnected {
+            background: #f44336;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .current-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 30px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .confirm-dialog {
+            text-align: center;
+        }
+
+        .confirm-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .confirm-message {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .about-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+
+        }
+
+        .about-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: left;
+            position: relative;            
+        }
+
+        .about-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;  /* Ini yang paling penting */
+            gap: 10px;
+            position: relative;
+        }
+
+        .about-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            justify-content: justify;  /* Ini yang paling penting */
+            position: relative;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+            justify-items: center;
+        }
+
+        .team-member {
+            text-align: center;
+            width: 100%; /* ✅ Biarkan mengikuti lebar grid cell */
+            max-width: 140px; /* ✅ Batasi agar tidak terlalu lebar */
+            margin: 0 auto;
+        }
+
+        .team-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .team-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+
+       .photo-placeholder {
+            display: none;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            color: white;
+            font-size: 48px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .team-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .emergency-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(244, 67, 54, 0.4);
+            max-width: 350px;
+            z-index: 9000;
+            animation: slideInRight 0.5s ease, pulse 2s infinite;
+            display: none;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 8px 32px rgba(244, 67, 54, 0.4);
+            }
+            50% {
+                box-shadow: 0 8px 32px rgba(244, 67, 54, 0.7);
+            }
+        }
+
+        .emergency-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .emergency-title {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .emergency-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .emergency-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .emergency-message {
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .emergency-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .emergency-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+
+        .emergency-btn.primary {
+            background: white;
+            color: #f44336;
+        }
+
+       .emergency-btn.primary:hover {
+            background: #f5f5f5;
+        }
+
+        .emergency-btn.secondary {
+           background: rgba(255, 255, 255, 0.2);
+           color: white;
+           border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .emergency-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+       .default-view {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .logo-container {
+                padding: 10px 15px;
+            }
+            
+            .logo-icon {
+                width: 35px;
+                height: 35px;
+                /* font-size: 16px; */
+            }
+            
+            .logo-title {
+                font-size: 20px;
+            }
+            
+            .logo-subtitle {
+                font-size: 9px;
+            }
+
+            .nav-menu {
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            
+            .battery-status {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
+            .welcome-title {
+                font-size: 28px;
+            }
+            
+            .welcome-subtitle {
+                font-size: 18px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .action-btn {
+                min-width: 250px;
+                padding: 15px 30px;
+                font-size: 16px;
+            }
+
+            .activity-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .info-panel {
+                margin: 0 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px 15px;
+            }
+            
+            .logo-container {
+                padding: 8px 12px;
+            }
+            
+            .welcome-title {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+            
+            .welcome-subtitle {
+                font-size: 16px;
+            }
+            
+            .welcome-description {
+                font-size: 14px;
+            }
+            
+            .action-btn {
+                min-width: 200px;
+                padding: 12px 25px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+        <div class="logo-icon">
+            <img src="assets/LogoSAFE.png" alt="SAFE Logo">
+        </div>
+            <div class="logo-text">
+                <div class="logo-title">SAFE</div>
+                <div class="logo-subtitle">Smart Assistive<br>Fall-detection Equipment</div>
+            </div>
+
+            
+    <!-- Emergency Notification -->
+    <div id="emergencyNotification" class="emergency-notification">
+        <div class="emergency-header">
+            <div class="emergency-title">
+                🚨 PERINGATAN DARURAT
+            </div>
+            <button class="emergency-close" onclick="closeEmergencyNotification()">&times;</button>
+        </div>
+        <div class="emergency-message">
+            Terdeteksi kejadian jatuh pada pengguna rompi SAFE-001! Segera periksa kondisi pengguna dan berikan bantuan yang diperlukan.
+        </div>
+        <div class="emergency-actions">
+            <button class="emergency-btn primary" onclick="openLocationMaps()">📍 Cek Lokasi</button>
+            <button class="emergency-btn secondary" onclick="closeEmergencyNotification()">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Device Selection Modal -->
+    <div id="deviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📱 Pilih Rompi SAFE</h2>
+                <button class="close-btn" onclick="closeDeviceModal()">&times;</button>
+            </div>
+            
+            <div class="settings-section">
+                <div class="section-title">
+                    Pilih rompi yang ingin dipantau:
+                </div>
+                <div class="device-list">
+                    <div class="device-item" onclick="selectDevice('SAFE-001')">
+                        <div class="device-info">
+                            <div class="device-status"></div>
+                            <div>
+                                <div style="font-weight: bold;">SAFE-001</div>
+                                <div style="font-size: 12px; color: #666;">Terhubung</div>
+                            </div>
+                        </div>
+                        <div style="color: #4caf50; font-size: 12px;">✓ Aktif</div>
+                    </div>
+                    <div class="device-item" onclick="selectDevice('SAFE-002')">
+                        <div class="device-info">
+                            <div class="device-status disconnected"></div>
+                            <div>
+                                <div style="font-weight: bold;">SAFE-002</div>
+                                <div style="font-size: 12px; color: #666;">Tidak terhubung</div>
+                            </div>
+                        </div>
+                        <div style="color: #f44336; font-size: 12px;">✗ Nonaktif</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ Pengaturan</h2>
+                <button class="close-btn" onclick="closeSettings()">&times;</button>
+            </div>
+            
+            <div class="settings-section">
+                <div class="section-title">
+                    📱 Pairing Alat
+                </div>
+                <div class="device-list">
+                    <div class="device-item">
+                        <div class="device-info">
+                            <div class="device-status"></div>
+                            <div>
+                                <div style="font-weight: bold;">SAFE-001</div>
+                                <div style="font-size: 12px; color: #666;">Terhubung</div>
+                            </div>
+                        </div>
+                        <div style="color: #4caf50; font-size: 12px;">✓ Aktif</div>
+                    </div>
+                    <div class="device-item">
+                        <div class="device-info">
+                            <div class="device-status disconnected"></div>
+                            <div>
+                                <div style="font-weight: bold;">SAFE-002</div>
+                                <div style="font-size: 12px; color: #666;">Tidak terhubung</div>
+                            </div>
+                        </div>
+                        <div style="color: #f44336; font-size: 12px;">✗ Nonaktif</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-title">
+                    👤 Profil Lansia
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" class="form-input" value="Siti Aminah" placeholder="Masukkan nama lengkap">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Usia</label>
+                    <input type="number" class="form-input" value="72" placeholder="Masukkan usia">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kontak Darurat</label>
+                    <input type="tel" class="form-input" value="081234567890" placeholder="Nomor telepon kontak darurat">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kondisi Medis</label>
+                    <input type="tel" class="form-input" value="Osteoporosis (RAWAN FRAKTUR)" placeholder="Apa kondisi medis?">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="closeSettings()">Batal</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <div class="confirm-dialog">
+                <div class="confirm-icon">🚪</div>
+                <div class="confirm-message">
+                    Apakah Anda yakin ingin keluar dari aplikasi SAFE?
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="closeLogoutModal()">Batal</button>
+                    <button class="btn btn-primary" onclick="logout()">Ya, Keluar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+        <div class="nav-menu">
+            <div id="batteryStatus" class="battery-status" style="display: none;">🔋 Baterai: 85%</div>
+            <div id="settingsNav" class="nav-item" onclick="openSettings()" style="display: none;">Pengaturan</div>
+            <div id="logoutNav" class="nav-item" onclick="confirmLogout()" style="display: none;">Keluar</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h1 class="welcome-title">Selamat Datang di SAFE</h1>
+        <h2 class="welcome-subtitle">Ayo pantau keluarga tersayangmu!</h2>
+        <p class="welcome-description">
+            Dengan teknologi IoT dan AI, pantau keselamatan lansia kapan saja dan di mana saja.
+        </p>
+            <div id="loginContainer" class="login-container">
+                <button class="login-btn" onclick="openLogin()">
+                <span class="btn-icon">🔐</span>
+                Masuk ke Dashboard
+                </button>
+            </div>
+        <div class="main-content">
+            <!-- Default View - About Us -->
+            <div id="defaultView" class="default-view">
+                <div class="about-section">
+                    <div class="about-card">
+                        <h3 class="about-title">Tentang SAFE</h3>
+                        <p class="about-description">
+                            <strong>SAFE (Smart Assistive Fall-detection Equipment)</strong> adalah inovasi rompi pintar yang dirancang untuk mendeteksi risiko dan kejadian jatuh secara real-time pada lansia. Sistem ini memanfaatkan <strong>sensor inersia (IMU)</strong>, <strong>kamera</strong>, serta <strong>deep learning (BiLSTM & YOLOv11)</strong> untuk mengidentifikasi ketidakstabilan tubuh dan hambatan penyebab tersandung di sekitar pengguna. Dilengkapi dengan fitur notifikasi berbasis cloud dan GPS, SAFE membantu menjaga keselamatan lansia dengan cara yang cerdas dan responsif.
+                        </p>
+                    </div>
+
+                    <div class="about-card">
+                        <h3 class="about-title">Tentang Kompetisi</h3>
+                        <p class="about-description">
+                            Inovasi ini dikembangkan untuk berpartisipasi dalam ajang <strong>GEMASTIK XVIII</strong>, pada <strong>Divisi 9 – Piranti Cerdas, Sistem Benam, dan IoT</strong>. GEMASTIK (Pagelaran Mahasiswa Nasional Bidang TIK) merupakan kompetisi teknologi informasi dan komunikasi tingkat nasional yang diselenggarakan oleh Pusat Prestasi Nasional.
+                        </p>
+                    </div>
+
+                    <div class="about-card">
+                        <h3 class="about-title">Tim Kami</h3>
+                        <div class="team-grid">
+                            <div class="team-member">
+                                <div class="team-photo">
+                                    <img src="assets/FotoFaris.png" alt="M. Faris Akbar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                    <div class="photo-placeholder">👨‍💻</div>
+                                </div>
+                                <h4 class="team-name">M. Faris Akbar</h4>
+                            </div>
+                            <div class="team-member">
+                                <div class="team-photo">
+                                    <img src="assets/FotoFarhat.png" alt="Ahmad Farhat" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                    <div class="photo-placeholder">👨‍💻</div>
+                                </div>
+                                <h4 class="team-name">Ahmad Farhat</h4>
+                            </div>
+                            <div class="team-member">
+                                <div class="team-photo">
+                                    <img src="assets/FotoKet.png" alt="Katherina Agatha Fecilia" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                    <div class="photo-placeholder">👩‍💻</div>
+                                </div>
+                                <h4 class="team-name">Katherina Agatha Fecilia</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Map View -->
+            <div id="mapView" class="map-container">
+                <div>
+                    <img src="assets/maps-screenshot.jpg" alt="Tampilan Lokasi" style="max-width: 50%; border-radius: 8px; margin-top: 10px;">
+                </div>
+            </div>
+
+            <!-- Activity Dashboard -->
+            <div id="activityView" class="activity-dashboard">
+                <div class="current-status">
+                    <div class="status-icon">🪑</div>
+                    <span>Saat ini: Sedang Duduk</span>
+                </div>
+
+                <div class="activity-summary">
+                    <div class="activity-timer">
+                        ⏱ Aktivitas dimulai pukul 09:00 | Total pemakaian: 3 Jam 00 Menit
+                    </div>
+                </div>
+                
+                <div class="activity-title">Resume Aktivitas Hari Ini:</div>
+                
+                <div class="activity-grid">
+                    <div class="activity-item">
+                        <div class="activity-icon standing">👤</div>
+                        <div class="activity-details">
+                            <div class="activity-name">Berdiri</div>
+                            <div class="activity-time">27 Menit</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 15%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon walking">🚶</div>
+                        <div class="activity-details">
+                            <div class="activity-name">Berjalan</div>
+                            <div class="activity-time">58 Menit</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 32%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon sleeping">😴</div>
+                        <div class="activity-details">
+                            <div class="activity-name">Tidur</div>
+                            <div class="activity-time">50 Menit</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 28%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon sitting">🪑</div>
+                        <div class="activity-details">
+                            <div class="activity-name">Duduk</div>
+                            <div class="activity-time">45 Menit</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 25%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="actionButtons" class="action-buttons">
+            <button class="action-btn location" onclick="showLocation()">
+                <span class="btn-icon">📍</span>
+                Cek Lokasi
+            </button>
+            <button class="action-btn activity" onclick="showActivity()">
+                <span class="btn-icon">📊</span>
+                Resume Aktivitas
+            </button>
+        </div>
+
+        <div id="infoPanel" class="info-panel">
+            <div class="info-title">Informasi Terakhir</div>
+            <div class="info-item">
+                <span class="info-label">Terakhir terdeteksi jatuh:</span>
+                <span class="info-value">12:30 PM</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Lokasi terakhir:</span>
+                <span class="info-value">Rumah Sakit XYZ</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Developed with ❤️ by Tim YONO – GEMASTIK 2025</p>
+        <!-- <div class="social-links">
+            <a href="#" class="social-link">📷</a>
+            <a href="#" class="social-link">✉️</a>
+            <a href="#" class="social-link">💬</a> -->
+        </div>
+    </div>
+
+    <script>
+    let isLoggedIn = false;
+    let selectedDevice = 'SAFE-001';
+
+            // Tambahkan fungsi login
+        function openLogin() {
+            document.getElementById('deviceModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeviceModal() {
+            document.getElementById('deviceModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function selectDevice(deviceId) {
+            selectedDevice = deviceId;
+            isLoggedIn = true;
+            
+            // Hide login container and about section
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('defaultView').style.display = 'none';
+            
+            // Show dashboard elements
+            document.getElementById('actionButtons').classList.add('logged-in');
+            document.getElementById('infoPanel').classList.add('logged-in');
+            
+            // Show navigation elements
+            document.getElementById('batteryStatus').style.display = 'block';
+            document.getElementById('settingsNav').style.display = 'block';
+            document.getElementById('logoutNav').style.display = 'block';
+            
+            // Update device alert
+            document.getElementById('deviceAlert').textContent = deviceId;
+            
+            closeDeviceModal();
+            
+            // Simulate emergency for demo
+            if (deviceId === 'SAFE-001') {
+                setTimeout(() => {
+                    showEmergencyNotification();
+                }, 5000);
+            }
+        }
+
+        // Modifikasi fungsi logout
+        function logout() {
+            isLoggedIn = false;
+            selectedDevice = '';
+            
+            // Show login container and about section
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('defaultView').style.display = 'block';
+            
+            // Hide dashboard elements
+            document.getElementById('actionButtons').classList.remove('logged-in');
+            document.getElementById('infoPanel').classList.remove('logged-in');
+            document.getElementById('mapView').style.display = 'none';
+            document.getElementById('activityView').style.display = 'none';
+            
+            // Hide navigation elements
+            document.getElementById('batteryStatus').style.display = 'none';
+            document.getElementById('settingsNav').style.display = 'none';
+            document.getElementById('logoutNav').style.display = 'none';
+            
+            // Reset button states
+            document.querySelectorAll('.action-btn').forEach(btn => btn.classList.remove('active'));
+            
+            closeLogoutModal();
+        }
+
+        // Modifikasi window.onclick untuk include deviceModal
+        window.onclick = function(event) {
+            const settingsModal = document.getElementById('settingsModal');
+            const logoutModal = document.getElementById('logoutModal');
+            const deviceModal = document.getElementById('deviceModal');
+            
+            if (event.target === settingsModal) {
+                closeSettings();
+            }
+            if (event.target === logoutModal) {
+                closeLogoutModal();
+            }
+            if (event.target === deviceModal) {
+                closeDeviceModal();
+            }
+        }
+
+        function showLocation() {
+            // Hide all views
+            document.getElementById('defaultView').style.display = 'none';
+            document.getElementById('activityView').style.display = 'none';
+            document.getElementById('mapView').style.display = 'flex';
+            
+            // Update button states
+            document.querySelectorAll('.action-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.action-btn').classList.add('active');
+        }
+
+        function showActivity() {
+            // Hide all views
+            document.getElementById('defaultView').style.display = 'none';
+            document.getElementById('mapView').style.display = 'none';
+            document.getElementById('activityView').style.display = 'block';
+            
+            // Update button states
+            document.querySelectorAll('.action-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.action-btn').classList.add('active');
+            
+            // Animate progress bars with new values
+            setTimeout(() => {
+                document.querySelectorAll('.progress-fill').forEach((bar, index) => {
+                    const widths = ['15%', '32%', '28%', '25%'];
+                    bar.style.width = widths[index];
+                });
+            }, 300);
+        }
+
+        // Emergency Notification Functions
+        function showEmergencyNotification() {
+            document.getElementById('emergencyNotification').style.display = 'block';
+            
+            // Auto hide after 10 seconds if not manually closed
+            setTimeout(() => {
+                const notification = document.getElementById('emergencyNotification');
+                if (notification.style.display === 'block') {
+                    closeEmergencyNotification();
+                }
+            }, 10000);
+        }
+
+        function closeEmergencyNotification() {
+            document.getElementById('emergencyNotification').style.display = 'none';
+        }
+
+        function openLocationMaps() {
+            // Open Google Maps with emergency location
+            const lat = -7.250445;  // Example coordinates (Surabaya)
+            const lng = 112.768845;
+            const url = `https://www.google.com/maps?q=${lat},${lng}&z=17`;
+            window.open(url, '_blank');
+            
+            // Also show location in the dashboard
+            showLocation();
+            closeEmergencyNotification();
+        }
+
+        // Simulate emergency notification (for demo purposes)
+        function simulateEmergency() {
+            setTimeout(() => {
+                showEmergencyNotification();
+            }, 10000); // Show after 5 seconds for demo
+        }
+
+        // Settings Modal Functions
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function saveSettings() {
+            // Simulate saving settings
+            alert('Pengaturan berhasil disimpan!');
+            closeSettings();
+        }
+
+        // Logout Functions
+        function confirmLogout() {
+            document.getElementById('logoutModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function logout() {
+            // Simulate logout - redirect to login page
+            alert('Anda telah keluar dari aplikasi SAFE. Redirecting to login page...');
+            // window.location.href = 'login.html'; // Uncomment untuk redirect sebenarnya
+            closeLogoutModal();
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const settingsModal = document.getElementById('settingsModal');
+            const logoutModal = document.getElementById('logoutModal');
+            
+            if (event.target === settingsModal) {
+                closeSettings();
+            }
+            if (event.target === logoutModal) {
+                closeLogoutModal();
+            }
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            simulateEmergency();
+
+            // Efek hover untuk info item
+            document.querySelectorAll('.info-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.background = 'rgba(25, 118, 210, 0.05)';
+                this.style.borderRadius = '8px';
+                this.style.transform = 'translateX(5px)';
+                this.style.transition = 'all 0.3s ease';
+            });
+
+            item.addEventListener('mouseleave', function() {
+                this.style.background = 'transparent';
+                this.style.transform = 'translateX(0)';
+                        });
+                    });
+                });
+    </script>
+
+<!-- Tambahkan SEBELUM closing tag </body> di index.html Anda -->
+
+<!-- Dashboard Real-time Script -->
+<script>
+    // ==================== KONFIGURASI ====================
+    const API_BASE_URL = 'http://localhost/fall_detection/api';
+    const UPDATE_INTERVAL = 3000; // 3 detik
+
+    let updateTimer = null;
+
+    // Mapping aktivitas
+    const ACTIVITY_MAP = {
+        'standing': { icon: '👤', name: 'Berdiri', color: '#2196f3' },
+        'walking': { icon: '🚶', name: 'Berjalan', color: '#03a9f4' },
+        'sitting': { icon: '🪑', name: 'Duduk', color: '#009688' },
+        'sleeping': { icon: '😴', name: 'Tidur', color: '#00bcd4' },
+        'unknown': { icon: '❓', name: 'Tidak Diketahui', color: '#9e9e9e' }
+    };
+
+    // ==================== FETCH DATA ====================
+    async function fetchDashboardData() {
+        if (!isLoggedIn) return;
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/get_latest_data.php?device_id=${selectedDevice}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                updateDashboard(result.data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function updateDashboard(data) {
+        // Update baterai
+        if (data.device_info) {
+            const batteryEl = document.getElementById('batteryStatus');
+            if (batteryEl) {
+                batteryEl.textContent = `🔋 Baterai: ${data.device_info.battery_level}%`;
+                
+                // Warna berdasarkan level
+                if (data.device_info.battery_level < 20) {
+                    batteryEl.style.background = 'linear-gradient(135deg, #f44336, #d32f2f)';
+                } else if (data.device_info.battery_level < 50) {
+                    batteryEl.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
+                } else {
+                    batteryEl.style.background = 'linear-gradient(135deg, #4caf50, #388e3c)';
+                }
+            }
+        }
+
+        // Update aktivitas saat ini
+        if (data.current_activity) {
+            const activityType = data.current_activity.activity_type || 'unknown';
+            const activityInfo = ACTIVITY_MAP[activityType];
+            
+            const statusEl = document.querySelector('.current-status');
+            if (statusEl && activityInfo) {
+                statusEl.innerHTML = `
+                    <div class="status-icon">${activityInfo.icon}</div>
+                    <span>Saat ini: ${activityInfo.name}</span>
+                `;
+            }
+
+            // Update timer
+            const timerEl = document.querySelector('.activity-timer');
+            if (timerEl && data.current_activity.start_time) {
+                const startTime = new Date(data.current_activity.start_time);
+                const hours = startTime.getHours().toString().padStart(2, '0');
+                const minutes = startTime.getMinutes().toString().padStart(2, '0');
+                const duration = data.current_activity.duration_minutes || 0;
+                const durationHours = Math.floor(duration / 60);
+                const durationMinutes = duration % 60;
+                
+                timerEl.textContent = `⏱ Aktivitas dimulai pukul ${hours}:${minutes} | Total: ${durationHours} Jam ${durationMinutes} Menit`;
+            }
+        }
+
+        // Update ringkasan aktivitas
+        if (data.activity_summary && data.activity_summary.activities) {
+            const activities = data.activity_summary.activities;
+            
+            // Standing
+            updateActivityItem('standing', activities.standing?.minutes || 0, activities.standing?.percentage || 0);
+            
+            // Walking
+            updateActivityItem('walking', activities.walking?.minutes || 0, activities.walking?.percentage || 0);
+            
+            // Sleeping
+            updateActivityItem('sleeping', activities.sleeping?.minutes || 0, activities.sleeping?.percentage || 0);
+            
+            // Sitting
+            updateActivityItem('sitting', activities.sitting?.minutes || 0, activities.sitting?.percentage || 0);
+        }
+
+        // Update GPS
+        if (data.gps) {
+            const locationEl = document.querySelector('.info-item:last-child .info-value');
+            if (locationEl) {
+                locationEl.textContent = `${data.gps.latitude.toFixed(6)}, ${data.gps.longitude.toFixed(6)}`;
+            }
+        }
+
+        // Check fall events
+        if (data.today_falls && data.today_falls.count > 0) {
+            const latestFall = data.today_falls.events[0];
+            
+            // Update waktu jatuh terakhir
+            const fallTimeEl = document.querySelector('.info-item:first-child .info-value');
+            if (fallTimeEl) {
+                const fallTime = new Date(latestFall.detected_at);
+                const hours = fallTime.getHours().toString().padStart(2, '0');
+                const minutes = fallTime.getMinutes().toString().padStart(2, '0');
+                fallTimeEl.textContent = `${hours}:${minutes}`;
+            }
+
+            // Tampilkan notifikasi jika status masih detected
+            if (latestFall.status === 'detected') {
+                showEmergencyFromAPI(latestFall);
+            }
+        }
+    }
+
+    function updateActivityItem(activityType, minutes, percentage) {
+        const iconEl = document.querySelector(`.activity-icon.${activityType}`);
+        if (!iconEl) return;
+
+        const detailsEl = iconEl.parentElement.querySelector('.activity-details');
+        if (!detailsEl) return;
+
+        // Update waktu
+        const timeEl = detailsEl.querySelector('.activity-time');
+        if (timeEl) {
+            timeEl.textContent = `${minutes} Menit`;
+        }
+
+        // Update progress bar
+        const progressEl = detailsEl.querySelector('.progress-fill');
+        if (progressEl) {
+            progressEl.style.width = `${percentage}%`;
+        }
+    }
+
+    function showEmergencyFromAPI(fallData) {
+        const notification = document.getElementById('emergencyNotification');
+        if (!notification) return;
+
+        const messageEl = notification.querySelector('.emergency-message');
+        if (messageEl) {
+            const fallTime = new Date(fallData.detected_at);
+            const hours = fallTime.getHours().toString().padStart(2, '0');
+            const minutes = fallTime.getMinutes().toString().padStart(2, '0');
+            const confidence = (fallData.confidence * 100).toFixed(1);
+            
+            messageEl.innerHTML = `
+                Terdeteksi kejadian jatuh pada pengguna rompi ${selectedDevice}!<br>
+                <strong>Waktu:</strong> ${hours}:${minutes}<br>
+                <strong>Confidence:</strong> ${confidence}%<br>
+                Segera periksa kondisi pengguna!
+            `;
+        }
+
+        notification.style.display = 'block';
+    }
+
+    function startAutoUpdate() {
+        if (updateTimer) clearInterval(updateTimer);
+        fetchDashboardData();
+        updateTimer = setInterval(fetchDashboardData, UPDATE_INTERVAL);
+        console.log('Auto-update started');
+    }
+
+    function stopAutoUpdate() {
+        if (updateTimer) {
+            clearInterval(updateTimer);
+            updateTimer = null;
+        }
+        console.log('Auto-update stopped');
+    }
+
+    // ==================== MODIFIKASI FUNGSI LOGIN ====================
+    // Update fungsi selectDevice yang sudah ada
+    const originalSelectDevice = window.selectDevice;
+    window.selectDevice = function(deviceId) {
+        // Panggil fungsi original
+        if (originalSelectDevice) {
+            originalSelectDevice(deviceId);
+        }
+        
+        // Tambahkan auto-update
+        selectedDevice = deviceId;
+        isLoggedIn = true;
+        startAutoUpdate();
+    };
+
+    // Update fungsi logout yang sudah ada
+    const originalLogout = window.logout;
+    window.logout = function() {
+        isLoggedIn = false;
+        stopAutoUpdate();
+        
+        // Panggil fungsi original
+        if (originalLogout) {
+            originalLogout();
+        }
+    };
+
+    // Pause update saat tab tidak aktif
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            stopAutoUpdate();
+        } else if (isLoggedIn) {
+            startAutoUpdate();
+        }
+    });
+
+    console.log('Dashboard real-time integration loaded');
+</script>
+
+<!-- Optional: Tambahkan Google Maps untuk visualisasi lokasi -->
+<script>
+    function openLocationMaps() {
+        // Ambil koordinat terbaru dari API
+        fetch(`${API_BASE_URL}/get_latest_data.php?device_id=${selectedDevice}`)
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.data.gps) {
+                    const lat = result.data.gps.latitude;
+                    const lon = result.data.gps.longitude;
+                    const url = `https://www.google.com/maps?q=${lat},${lon}&z=17`;
+                    window.open(url, '_blank');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        
+        closeEmergencyNotification();
+    }
+</script>
+
+</body>
+</html>

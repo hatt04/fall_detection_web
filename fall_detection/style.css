@@ -1,0 +1,37 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #e7f0fd;
+  color: #333;
+}
+
+.resume {
+  background: #dceaff;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px auto;
+  width: 80%;
+}
+
+button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  background-color: #2c57dd;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1a3eb5;
+}
+
+.info {
+  margin-top: 20px;
+  background-color: white;
+  padding: 15px;
+  border-radius: 10px;
+  width: 60%;
+  margin: auto;
+}
